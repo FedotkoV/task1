@@ -5,40 +5,46 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.view.inputmethod.InputMethodManager
-import android.widget.Button
-import android.widget.EditText
-import android.widget.Toast
+import com.getstarted.lesson1.databinding.ActivityLogInBinding
+import com.google.android.material.snackbar.Snackbar
+
+
+private const val PASSWORD_LENGTH = 6
+private val digit = Regex("[0-9]+")
+private val smallLetter = Regex("[a-z]+")
+private val bigLetter = Regex("[A-Z]+")
 
 class LogInActivity : AppCompatActivity() {
-    lateinit var userName: EditText
-    lateinit var userPassword: EditText
-    lateinit var logInButton: Button
-    private val passwordLength = 6
+    lateinit var binding: ActivityLogInBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_log_in)
+        binding = ActivityLogInBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        userName = findViewById(R.id.login_field)
-        userPassword = findViewById(R.id.password_field)
+        binding.logInButton.setOnClickListener {
+            // Hide the keyboard
+            val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            inputMethodManager.hideSoftInputFromWindow(binding.logInButton.windowToken, 0)
 
-         logInButton = findViewById(R.id.log_in_button)
-        logInButton.setOnClickListener { checkUser() }
+            checkUser()
+        }
     }
 
     /**
      * checks user`s input if user name is correct start to check him password
      */
     private fun checkUser() {
-        val userNameToText = userName.text
+        val userNameToText = binding.loginField.text
 
         if (userNameToText.isEmpty()) {
-            Toast.makeText(this, "name cannot be empty",
-                Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.snackbarText, R.string.name_is_empty,
+                Snackbar.LENGTH_LONG).show()
         }
         else if (' ' in userNameToText){
-            Toast.makeText(this, "name cannot contain space sign",
-                Toast.LENGTH_SHORT).show()
+            Snackbar.make(binding.snackbarText, R.string.name_with_space,
+                Snackbar.LENGTH_LONG).show()
         }
         else checkPassword()
     }
@@ -48,60 +54,37 @@ class LogInActivity : AppCompatActivity() {
      * min 1 big, small letter and digit)
      */
     private fun checkPassword() {
-        val userPasswordString = userPassword.text
+        val userPasswordString = binding.passwordField.text
 
         when  {
             (userPasswordString.isEmpty()) ->
-                Toast.makeText(this, "password cannot be empty",
-                    Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.snackbarText, R.string.password_is_empty,
+                    Snackbar.LENGTH_LONG).show()
             ' ' in userPasswordString -> {
-                Toast.makeText(this, "password cannot contain space sign",
-                    Toast.LENGTH_SHORT).show()
+                Snackbar.make(binding.snackbarText, R.string.password_with_space,
+                    Snackbar.LENGTH_LONG).show()
             }
-            !hasDigit(userPasswordString) -> {
-                Toast.makeText(this, "password must contains at least one digit",
-                    Toast.LENGTH_SHORT).show()
+            !digit.containsMatchIn(userPasswordString)  -> {
+                Snackbar.make(binding.snackbarText, R.string.password_needs_digit,
+                    Snackbar.LENGTH_LONG).show()
             }
-            !hasBigLetter(userPasswordString) -> {
-                Toast.makeText(this, "password must contains at least one big letter",
-                    Toast.LENGTH_SHORT).show()
+            !bigLetter.containsMatchIn(userPasswordString) -> {
+                Snackbar.make(binding.snackbarText, R.string.password_needs_big_letter,
+                    Snackbar.LENGTH_LONG).show()
             }
-            !hasSmallLetter(userPasswordString) -> {
-                Toast.makeText(this, "password must contains at least one small letter",
-                    Toast.LENGTH_SHORT).show()
+            !smallLetter.containsMatchIn(userPasswordString) -> {
+                Snackbar.make(binding.snackbarText, R.string.password_needs_small_letter,
+                    Snackbar.LENGTH_LONG).show()
             }
-            userPasswordString.length < passwordLength -> Toast.makeText(this,
-                                         "password must contains min 6 elements",
-                                                                    Toast.LENGTH_SHORT).show()
+            userPasswordString.length < PASSWORD_LENGTH -> {
+                Snackbar.make(
+                    binding.snackbarText, R.string.short_password,
+                    Snackbar.LENGTH_LONG).show()
+            }
             else ->  {
-                // Hide the keyboard
-                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-                inputMethodManager.hideSoftInputFromWindow(logInButton.windowToken, 0)
-
-                Toast.makeText(this, "You logged in",
-                    Toast.LENGTH_LONG).show()
+                Snackbar.make(binding.snackbarText, R.string.you_logged_in,
+                    Snackbar.LENGTH_LONG).show()
             }
         }
-    }
-
-    private fun hasSmallLetter(userPassword: Editable): Boolean {
-        for (i in 'a'..'z') {
-            if ("$i" in userPassword) return true
-        }
-        return false
-    }
-
-    private fun hasBigLetter(userPassword: Editable): Boolean {
-        for (i in 'A'..'Z') {
-            if ("$i" in userPassword) return true
-        }
-        return false
-    }
-
-    private fun hasDigit(userPassword: Editable): Boolean {
-        for (i in 0..9) {
-            if ("$i" in userPassword) return true
-        }
-        return false
     }
 }

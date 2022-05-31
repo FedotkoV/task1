@@ -1,11 +1,11 @@
 package com.getstarted.lesson1
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
+import androidx.appcompat.app.AppCompatActivity
 import android.widget.ImageView
+import kotlinx.coroutines.*
+import kotlinx.coroutines.Dispatchers.Main
 
 // holds stopping time in milliseconds
 private const val STOPPING_TIME: Long = 1000
@@ -14,9 +14,7 @@ class MainActivity : AppCompatActivity() {
     lateinit var image: ImageView // will hold reference for ImageView
 
     // new thread for changing the pics
-    private val t: Thread = Thread {
-        startingAnimation()
-    }
+    lateinit var myThread: CoroutineScope
 
     // holds actual num of the shown image (default is 5)
     private var imageIndex: Int = 5
@@ -31,25 +29,18 @@ class MainActivity : AppCompatActivity() {
         if (savedInstanceState != null) {
             imageIndex = savedInstanceState.getInt("imageIndex")
         }
+    }
 
+    override fun onStart() {
+        super.onStart()
         //  starts the thread
-        Handler(Looper.getMainLooper()).postDelayed({
-            t.start()
-        }, 0)
+        myThread = CoroutineScope(Main)
+        myThread.launch { startingAnimation() }
     }
 
-    override fun onResume() {
-        super.onResume()
-        // helps to move to the next activity after pause or lost focusing on activity
-        if (imageIndex < 2) {
-            t.interrupt()
-            goToNextActivity()
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        if (!t.isInterrupted) t.interrupt() // stops the thread if it is run
+    override fun onPause() {
+        super.onPause()
+        myThread.cancel()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -59,7 +50,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * changes the image view after pause($stoppingTime) inside loop
      */
-    private fun startingAnimation() {
+    private suspend fun startingAnimation() {
         for (i in imageIndex downTo 1) {
             imageIndex = i // set new index of image
             val nextImage = when (i) {
@@ -69,17 +60,8 @@ class MainActivity : AppCompatActivity() {
                 2 -> R.drawable.dice_2
                 else -> R.drawable.dice_1
             }
-            runOnUiThread {
-                image.setImageResource(nextImage)
-            }
-            if(!t.isInterrupted) {
-                try {
-                    Thread.sleep(STOPPING_TIME)
-                }
-                catch (_: InterruptedException){
-                    return
-                }
-            }
+            setImage(nextImage)
+            delay(STOPPING_TIME)
         }
         goToNextActivity()
     }
@@ -90,5 +72,11 @@ class MainActivity : AppCompatActivity() {
     private fun goToNextActivity() {
         val intent = Intent(this, LogInActivity::class.java)
         startActivity(intent)
+    }
+
+    private suspend fun setImage(input: Int) {
+        withContext(Main) {
+            image.setImageResource(input)
+        }
     }
 }
