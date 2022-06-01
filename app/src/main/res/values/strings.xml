@@ -1,3 +1,17 @@
 <resources>
-    <string name="app_name">lesson1</string>
+    <string name="app_name">task1</string>
+    <string name="enter_login">Enter your login</string>
+    <string name="enter_password">Enter your password</string>
+    <string name="log_in">Log in</string>
+    <string name="you_logged_in">You logged in</string>
+
+    <string name="name_is_empty">name cannot be empty</string>
+    <string name="name_with_space">name cannot contain space sign</string>
+
+    <string name="password_is_empty">password cannot be empty</string>
+    <string name="password_with_space">password cannot contain space sign</string>
+    <string name="password_needs_digit">password must contains at least one digit</string>
+    <string name="password_needs_big_letter">password must contains at least one big letter</string>
+    <string name="password_needs_small_letter">password must contains at least one small letter</string>
+    <string name="short_password">min possible password`s length is 6</string>
 </resources>
