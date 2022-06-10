@@ -1,3 +1,13 @@
 <resources>
-    <string name="app_name">lesson_2</string>
+    <string name="app_name">lesson2</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="next_page">Next page</string>
+    <string name="result">Result</string>
+    <string name="start">Start</string>
+    <string name="cannot_be_empty">Please answer for all questions</string>
+    <string name="only_letters">Please use only english letters</string>
+    <string name="travel_to">%1$s is a good place</string>
+    <string name="result_of_answers">You have %1$d correct answers from 4</string>
+    <string name="hi">Hi %1$s!</string>
 </resources>
