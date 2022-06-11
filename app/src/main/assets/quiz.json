@@ -1,0 +1,28 @@
+{
+  "questions" : {
+  "1" : {
+    "content" : "What is your name?",
+    "type" : "enter"
+  },
+  "2" : {
+    "content" : "What is your gender?",
+    "type" : "single",
+    "answers" : ["male", "female"]
+  },
+  "3" : {
+    "content" : "How old are you?",
+    "type" : "enter"
+  },
+  "4" : {
+    "content" : "What is the capital of GB?",
+    "type" : "single",
+    "answers" : ["France", "Cambridge", "London", "Berlin"]
+  }
+},
+  "answer" :
+  {
+    "question" : {
+      "4" : "London"
+    }
+  }
+}
